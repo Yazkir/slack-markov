@@ -15,6 +15,7 @@ import (
 var (
 	alwaysReply     bool
 	botControlWord  string
+	botAPIName      string
 	botStatus       string
 	botUsername     string
 	chatty          bool
@@ -36,8 +37,6 @@ var (
 
 func init() {
 	rand.Seed(time.Now().UnixNano()) // Seed the random number generator.
-
-	botStatus = "enabled"
 }
 
 func main() {
@@ -53,8 +52,9 @@ func main() {
 	flag.IntVar(&numWords, "words", 100, "Maximum number of words in the output")
 	flag.IntVar(&prefixLen, "prefix", 2, "Prefix length in words")
 	flag.IntVar(&responseChance, "responseChance", 10, "Percent chance to generate a response on each request")
-	flag.IntVar(&responseTimeout, "responseTimeout", 3, "Response delay in seconds (to prevent flooding)")
+	flag.IntVar(&responseTimeout, "responseTimeout", 2, "Response delay in seconds (to prevent flooding)")
 	flag.StringVar(&botControlWord, "botControlWord", "markovctl", "Keyword used to enable/disable the bot")
+	flag.StringVar(&botAPIName, "botAPIName", "slackbot", "The name of the bot as received in the API")
 	flag.StringVar(&botUsername, "botUsername", "markov-bot", "The name of the bot when it speaks")
 	flag.StringVar(&stateFile, "stateFile", "state", "File to use for maintaining our markov chain state")
 

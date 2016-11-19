@@ -26,7 +26,7 @@ func botControl(command string) []byte {
 			return generateResponse(botUsername, status, false)
 		}
 	default:
-		status := fmt.Sprintf("%s doesn't know that command", botUsername)
+		status := fmt.Sprintf("%s doesn't know that command |%s|", botUsername, command)
 		return generateResponse(botUsername, status, false)
 	}
 }

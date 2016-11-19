@@ -20,15 +20,18 @@ type WebhookResponse struct {
 }
 
 func init() {
+	botStatus = "enabled"
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		incomingText := r.PostFormValue("text")
 		if incomingText != "" && r.PostFormValue("user_id") != "" {
+			//log.Printf("user_id:%s\nuser_name: %s", r.PostFormValue("user_id"), r.PostFormValue("user_name")) // Debug
 			text := parseText(incomingText)
 			log.Printf("Handling incoming request: %s", text)
 
-			if strings.HasPrefix(text, botControlWord) {
+			if strings.HasPrefix(text, botControlWord) && r.PostFormValue("user_name") != botAPIName {
 				// Strip the keyword from our command
-				command := strings.TrimSpace(strings.Replace(text, botControlWord, "", 0))
+				command := strings.TrimSpace(strings.Replace(text, botControlWord, "", 1))
 				w.Write(botControl(command))
 			} else {
 				if text != "" && !strings.Contains(text, botControlWord) {
@@ -39,7 +42,7 @@ func init() {
 					markovChain.Save(stateFile)
 				}()
 
-				if botStatus != "disabled" && (chatty || r.PostFormValue("user_id") != botUsername) {
+				if botStatus != "disabled" && (chatty || r.PostFormValue("user_name") != botAPIName) {
 					if rand.Intn(100) <= responseChance || seeMyName(text) {
 						w.Write(generateResponse(botUsername, markovChain.Generate(numWords), true))
 					}
