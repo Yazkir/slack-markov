@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"log"
 	"regexp"
 	"strings"
+	"time"
 )
 
 var (
@@ -51,4 +54,32 @@ func parseText(text string) string {
 	text = strings.Replace(text, "&amp;", "&", -1)
 
 	return text
+}
+
+func generateResponse(username, text string, twitter bool) []byte {
+	var response WebhookResponse
+	response.Username = username
+	response.Text = text
+	log.Printf("Sending response: %s", response.Text)
+
+	b, err := json.Marshal(response)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if twitter && twitterClient != nil {
+		log.Printf("Tweeting: %s", response.Text)
+		twitterClient.Post(response.Text)
+	}
+
+	time.Sleep(time.Duration(responseTimeout) * time.Second)
+	return b
+}
+
+func seeMyName(text string) bool {
+	if alwaysReply {
+		return strings.Contains(text, botUsername)
+	} else {
+		return strings.HasPrefix(text, botUsername)
+	}
 }

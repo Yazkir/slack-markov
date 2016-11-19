@@ -7,13 +7,11 @@ package main
 // https://my.slack.com/services/new/outgoing-webhook
 
 import (
-	"encoding/json"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type WebhookResponse struct {
@@ -28,32 +26,24 @@ func init() {
 			text := parseText(incomingText)
 			log.Printf("Handling incoming request: %s", text)
 
-			if text != "" {
-				markovChain.Write(text)
-			}
-
-			go func() {
-				markovChain.Save(stateFile)
-			}()
-
-			if rand.Intn(100) <= responseChance || strings.HasPrefix(text, botUsername) {
-				var response WebhookResponse
-				response.Username = botUsername
-				response.Text = markovChain.Generate(numWords)
-				log.Printf("Sending response: %s", response.Text)
-
-				b, err := json.Marshal(response)
-				if err != nil {
-					log.Fatal(err)
+			if strings.HasPrefix(text, botControlWord) {
+				// Strip the keyword from our command
+				command := strings.TrimSpace(strings.Replace(text, botControlWord, "", 0))
+				botControl(command)
+			} else {
+				if text != "" {
+					markovChain.Write(text)
 				}
 
-				if twitterClient != nil {
-					log.Printf("Tweeting: %s", response.Text)
-					twitterClient.Post(response.Text)
-				}
+				go func() {
+					markovChain.Save(stateFile)
+				}()
 
-				time.Sleep(5 * time.Second)
-				w.Write(b)
+				if botStatus != "disabled" && (chatty || r.PostFormValue("user_id") != botUsername) {
+					if rand.Intn(100) <= responseChance || seeMyName(text) {
+						w.Write(generateResponse(botUsername, markovChain.Generate(numWords), true))
+					}
+				}
 			}
 		}
 	})

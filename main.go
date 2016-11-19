@@ -13,12 +13,17 @@ import (
 )
 
 var (
-	httpPort       int
-	numWords       int
-	prefixLen      int
-	stateFile      string
-	responseChance int
-	botUsername    string
+	alwaysReply     bool
+	botControlWord  string
+	botStatus       string
+	botUsername     string
+	chatty          bool
+	httpPort        int
+	numWords        int
+	prefixLen       int
+	stateFile       string
+	responseChance  int
+	responseTimeout int
 
 	twitterConsumerKey       string
 	twitterConsumerSecret    string
@@ -31,6 +36,8 @@ var (
 
 func init() {
 	rand.Seed(time.Now().UnixNano()) // Seed the random number generator.
+
+	botStatus = "enabled"
 }
 
 func main() {
@@ -40,12 +47,16 @@ func main() {
 		flag.PrintDefaults()
 	}
 
+	flag.BoolVar(&alwaysReply, "alwaysReply", false, "Reply whenever the bot sees its name anywhere")
+	flag.BoolVar(&chatty, "chatty", false, "Allow to bot to reply to itself")
 	flag.IntVar(&httpPort, "port", 8000, "The HTTP port on which to listen")
 	flag.IntVar(&numWords, "words", 100, "Maximum number of words in the output")
 	flag.IntVar(&prefixLen, "prefix", 2, "Prefix length in words")
 	flag.IntVar(&responseChance, "responseChance", 10, "Percent chance to generate a response on each request")
-	flag.StringVar(&stateFile, "stateFile", "state", "File to use for maintaining our markov chain state")
+	flag.IntVar(&responseTimeout, "responseTimeout", 3, "Response delay in seconds (to prevent flooding)")
+	flag.StringVar(&botControlWord, "botControlWord", "markovctl", "Keyword used to enable/disable the bot")
 	flag.StringVar(&botUsername, "botUsername", "markov-bot", "The name of the bot when it speaks")
+	flag.StringVar(&stateFile, "stateFile", "state", "File to use for maintaining our markov chain state")
 
 	flag.StringVar(&twitterConsumerKey, "twitterConsumerKey", "", "Twitter API key")
 	flag.StringVar(&twitterConsumerSecret, "twitterConsumerSecret", "", "Twitter API key secret")
