@@ -7,7 +7,7 @@ func botControl(command string) []byte {
 	case "status":
 		status := fmt.Sprintf("%s is currently %s", botUsername, botStatus)
 		return generateResponse(botUsername, status, false)
-	case "shutdown":
+	case "shutdown", "stop":
 		if botStatus == "disabled" {
 			status := fmt.Sprintf("%s is already disabled", botUsername)
 			return generateResponse(botUsername, status, false)

@@ -29,9 +29,9 @@ func init() {
 			if strings.HasPrefix(text, botControlWord) {
 				// Strip the keyword from our command
 				command := strings.TrimSpace(strings.Replace(text, botControlWord, "", 0))
-				botControl(command)
+				w.Write(botControl(command))
 			} else {
-				if text != "" {
+				if text != "" && !strings.Contains(text, botControlWord) {
 					markovChain.Write(text)
 				}
 
