@@ -16,6 +16,12 @@ Usage
 
 * The bot will listen to incoming requests and add the messages to the chain. At a configurable response rate, it will also build and send a response to the channel
 
+Commands
+--------
+
+* memectl status|start|stop
+	* Will print the status of the bot, start the bot, or stop the bot.
+  
 Tips
 ----
 
