@@ -29,3 +29,4 @@ Tips
 * Keep your bot scoped to one channel.
 * Adjust the `-responseChance` option based on your team's activity and how much you want to annoy your co-workers
 * Look into the `-twitter*` options if you enjoy Twitter and libel
+* `-chatty True|False` Enables or disables the bot responding to itself. 
